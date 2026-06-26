@@ -13,7 +13,7 @@ import requests
  
 # Configuration
 SCOPES = ['https://www.googleapis.com/auth/youtube.upload']
-GOOGLE_SHEET_ID = "YOUR_SHEET_ID_HERE"  # You'll fill this in
+GOOGLE_SHEET_ID = "1bC0cj5EmXgnvpI_U9VcBlQTJOiRk1uB2Rh_uooOYtbA"  # You'll fill this in
  
 class YouTubeShortsGenerator:
     def __init__(self):
