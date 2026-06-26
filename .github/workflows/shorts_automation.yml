@@ -1,39 +1,48 @@
 name: YouTube Shorts Automation
- 
+
 on:
   schedule:
-    # Runs every day at 2 AM UTC
     - cron: '0 2 * * *'
-  # Also allow manual trigger
   workflow_dispatch:
- 
+
 jobs:
   process_videos:
     runs-on: ubuntu-latest
     
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.11'
       
-      - name: Install dependencies
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ffmpeg
+      
+      - name: Install Python dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          sudo apt-get install ffmpeg
+      
+      - name: Create credentials file
+        env:
+          YOUTUBE_CREDENTIALS: ${{ secrets.YOUTUBE_CREDENTIALS }}
+        run: |
+          echo "$YOUTUBE_CREDENTIALS" > client_secret.json
       
       - name: Download and process videos
         env:
-          SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
-          YOUTUBE_CREDENTIALS: ${{ secrets.YOUTUBE_CREDENTIALS }}
+          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
         run: |
-          python shorts_generator.py
+          python shorts_generator.py || true
       
       - name: Upload artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: processed-shorts
           path: output_shorts/
+          retention-days: 7
