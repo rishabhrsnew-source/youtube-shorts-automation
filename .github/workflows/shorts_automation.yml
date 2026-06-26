@@ -37,7 +37,7 @@ jobs:
         env:
           GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
         run: |
-          python shorts_generator.py || true
+          python shorts_generator.py 
       
       - name: Upload artifacts
         if: always()
