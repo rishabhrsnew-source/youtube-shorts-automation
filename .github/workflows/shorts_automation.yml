@@ -35,7 +35,7 @@ jobs:
       
       - name: Download and process videos
         env:
-          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+          GOOGLE_SHEET_ID: ${{ secrets.1bC0cj5EmXgnvpI_U9VcBlQTJOiRk1uB2Rh_uooOYtbA }}
         run: |
           python shorts_generator.py || true
       
