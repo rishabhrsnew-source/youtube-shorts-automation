@@ -1,13 +1,17 @@
 name: YouTube Shorts Automation
 
 on:
-  schedule:
-    - cron: '0 2 * * *'
   workflow_dispatch:
+    inputs:
+      video_url:
+        description: 'YouTube video URL to upload'
+        required: true
+        default: 'https://www.youtube.com/watch?v=dQw4w9WgXcQ'
 
 jobs:
-  process_videos:
+  upload_shorts:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     
     steps:
       - uses: actions/checkout@v4
@@ -27,22 +31,22 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       
-      - name: Create credentials file
+      - name: Create YouTube credentials
         env:
           YOUTUBE_CREDENTIALS: ${{ secrets.YOUTUBE_CREDENTIALS }}
         run: |
           echo "$YOUTUBE_CREDENTIALS" > client_secret.json
       
-      - name: Download and process videos
-        env:
-          GOOGLE_SHEET_ID: ${{ secrets.GOOGLE_SHEET_ID }}
+      - name: Download and Upload Video
         run: |
-          python shorts_generator.py 
+          python shorts_generator.py "${{ github.event.inputs.video_url }}"
       
       - name: Upload artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: processed-shorts
-          path: output_shorts/
+          name: processed-videos
+          path: |
+            downloaded_videos/
+            uploaded_videos/
           retention-days: 7
